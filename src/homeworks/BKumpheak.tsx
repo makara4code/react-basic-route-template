@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import type { User } from "../types/user";
 
 export default function BKumpheak() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const fetchUsers = async () => {
     const res = await axios.get("https://jsonplaceholder.typicode.com/users");

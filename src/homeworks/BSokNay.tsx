@@ -1,24 +1,5 @@
 import { useEffect, useState } from "react";
-
-type User = {
-  name: string;
-  username: string;
-  email: string;
-  phone: string;
-  webSite: string;
-  address: Address;
-  company: Company;
-};
-
-type Address = {
-  city: string;
-  street: string;
-  zipcode: string;
-};
-
-type Company = {
-  name: string;
-};
+import type { User } from "../types/user";
 
 export default function BSokNay() {
   // const [posts, setPost] = useState<Post[]>([]);
@@ -58,7 +39,7 @@ export default function BSokNay() {
               {data.phone}
               <br />
               <strong>WebSite: </strong>
-              {data.webSite}
+              {data.website}
               <br />
 
               <div>
