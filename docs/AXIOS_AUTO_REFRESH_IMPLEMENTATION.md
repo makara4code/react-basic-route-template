@@ -4,7 +4,7 @@ This document explains the automatic token refresh implementation using axios in
 
 ---
 
-## ✅ Implementation Complete!
+## ✅ Implementation Complete
 
 Your Hono + React application now has **automatic token refresh** using axios interceptors!
 
@@ -13,22 +13,26 @@ Your Hono + React application now has **automatic token refresh** using axios in
 ## 🎯 Features Implemented
 
 ### **1. Proactive Token Refresh**
+
 - ✅ Automatically refreshes tokens **before** they expire (4 minutes after login)
 - ✅ Prevents 401 errors by refreshing proactively
 - ✅ Seamless user experience - no interruptions
 
 ### **2. Reactive Token Refresh (401 Handling)**
+
 - ✅ Catches 401 errors from API calls
 - ✅ Automatically calls `/auth/refresh` endpoint
 - ✅ Retries the failed request with new token
 - ✅ Redirects to login if refresh fails
 
 ### **3. Concurrent Request Handling**
+
 - ✅ Prevents multiple simultaneous refresh requests
 - ✅ Queues requests during refresh
 - ✅ All requests succeed after single refresh
 
 ### **4. Automatic Cleanup**
+
 - ✅ Resets refresh timer after login
 - ✅ Clears refresh timer after logout
 - ✅ Handles refresh failures gracefully
@@ -42,12 +46,14 @@ Your Hono + React application now has **automatic token refresh** using axios in
 **Purpose:** Axios instance with automatic token refresh interceptors
 
 **Key Features:**
+
 - Request interceptor: Proactive refresh before expiration
 - Response interceptor: Reactive refresh on 401 errors
 - Concurrent request handling
 - Automatic redirect on refresh failure
 
 **Configuration:**
+
 ```typescript
 const ACCESS_TOKEN_EXPIRY = 5 * 60 * 1000; // 5 minutes
 const REFRESH_BUFFER = 1 * 60 * 1000;      // Refresh 1 minute before expiry
@@ -59,12 +65,14 @@ const REFRESH_THRESHOLD = 4 * 60 * 1000;   // Refresh at 4 minutes
 ### **2. `src/contexts/auth-context.tsx` (MODIFIED)**
 
 **Changes:**
+
 - ✅ Replaced `fetch()` with `axios`
 - ✅ Added `resetRefreshTimer()` after login
 - ✅ Added `clearRefreshTimer()` after logout
 - ✅ Simplified error handling (axios throws on non-2xx)
 
 **Before:**
+
 ```typescript
 const response = await fetch("/auth/login", {
   method: "POST",
@@ -82,6 +90,7 @@ const data = await response.json();
 ```
 
 **After:**
+
 ```typescript
 const response = await axios.post("/auth/login", {
   email,
@@ -192,6 +201,7 @@ User sees: Login page with message "Your session has expired"
 **Steps:**
 
 1. **Start dev servers:**
+
    ```bash
    # Terminal 1 - Frontend
    npm run dev
@@ -211,6 +221,7 @@ User sees: Login page with message "Your session has expired"
 6. **Make any API call** (navigate to dashboard, etc.)
 
 7. **Check console logs:**
+
    ```
    ⏰ Access token close to expiring, refreshing proactively...
    🔄 Refreshing access token...
@@ -223,6 +234,7 @@ User sees: Login page with message "Your session has expired"
    - Response: `{"success":true}`
 
 **✅ Expected Result:**
+
 - Token refreshes automatically after 4 minutes
 - No 401 errors
 - User doesn't notice anything
@@ -244,6 +256,7 @@ User sees: Login page with message "Your session has expired"
 4. **Navigate to dashboard** or make any API call
 
 5. **Check console logs:**
+
    ```
    🔒 Received 401 error, attempting to refresh token...
    🔄 Refreshing access token...
@@ -257,6 +270,7 @@ User sees: Login page with message "Your session has expired"
    - Retry of original request: 200 OK
 
 **✅ Expected Result:**
+
 - 401 error caught automatically
 - Token refreshed
 - Original request retried and succeeded
@@ -282,6 +296,7 @@ User sees: Login page with message "Your session has expired"
    - All original requests retried and succeeded
 
 **✅ Expected Result:**
+
 - Only one refresh request
 - All API calls succeed after refresh
 
@@ -300,6 +315,7 @@ User sees: Login page with message "Your session has expired"
 3. **Navigate to dashboard** or make any API call
 
 4. **Check console logs:**
+
    ```
    🔒 Received 401 error, attempting to refresh token...
    🔄 Refreshing access token...
@@ -311,6 +327,7 @@ User sees: Login page with message "Your session has expired"
    - Redirected to `/login?redirect=/app/dashboard`
 
 **✅ Expected Result:**
+
 - Refresh fails (no refresh token)
 - User redirected to login page
 - Return URL preserved in query string
@@ -330,6 +347,7 @@ const REFRESH_BUFFER = 4 * 60 * 1000 + 50 * 1000; // 4 min 50 sec (refresh after
 ```
 
 **Then:**
+
 1. Login
 2. Wait 10 seconds
 3. Make API call
@@ -406,11 +424,13 @@ axiosInstance.interceptors.request.use(
 ### **Issue: Refresh not triggering**
 
 **Check:**
+
 1. `lastRefreshTime` is set correctly (check console logs)
 2. `REFRESH_THRESHOLD` is correct (4 minutes)
 3. Request interceptor is running (add console.log)
 
 **Debug:**
+
 ```typescript
 // Add to src/lib/axios.ts request interceptor
 console.log("Time since last refresh:", Date.now() - lastRefreshTime);
@@ -433,6 +453,7 @@ console.log("Should refresh?", shouldRefreshToken());
 **Cause:** `/auth/refresh` endpoint returning 401, triggering another refresh.
 
 **Fix:** Ensure `/auth/refresh` is excluded in response interceptor:
+
 ```typescript
 if (originalRequest.url?.includes("/auth/refresh")) {
   return Promise.reject(error);
@@ -459,4 +480,3 @@ if (originalRequest.url?.includes("/auth/refresh")) {
 ---
 
 **Your application now has automatic token refresh with axios interceptors! Users will have a seamless authentication experience with no unexpected logouts.** 🎉
-

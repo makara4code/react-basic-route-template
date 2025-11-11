@@ -4,14 +4,16 @@ This guide will help you get the new httpOnly cookie authentication system runni
 
 ## 🎯 What Changed?
 
-### Before (localStorage):
+### Before (localStorage)
+
 ```
 React App → Directus API
 - Token stored in localStorage (vulnerable to XSS)
 - Manual token management
 ```
 
-### After (httpOnly Cookies):
+### After (httpOnly Cookies)
+
 ```
 React App → Hono Backend → Directus API
 - Token stored in httpOnly cookies (XSS-protected)
@@ -38,6 +40,7 @@ cp .env.example .env
 ```
 
 Default `.env` values:
+
 ```env
 PORT=3000
 NODE_ENV=development
@@ -54,6 +57,7 @@ npm run dev
 ```
 
 You should see:
+
 ```
 🚀 Server starting on port 3000
 📁 Serving static files from: ../dist
@@ -94,6 +98,7 @@ curl -X POST http://localhost:3000/auth/login \
 ```
 
 Expected response:
+
 ```json
 {
   "success": true,
@@ -107,6 +112,7 @@ Expected response:
 ```
 
 Check cookies:
+
 ```bash
 cat cookies.txt
 ```
@@ -119,6 +125,7 @@ curl http://localhost:3000/auth/me \
 ```
 
 Expected response:
+
 ```json
 {
   "data": {
@@ -169,12 +176,14 @@ my-react-app/
 ### 1. Frontend: auth-context.tsx
 
 **Before:**
+
 ```typescript
 // Stored token in localStorage
 await storage.setItem("auth:token", authToken);
 ```
 
 **After:**
+
 ```typescript
 // Token stored in httpOnly cookie by backend
 const response = await fetch("/auth/login", {
@@ -185,6 +194,7 @@ const response = await fetch("/auth/login", {
 ### 2. Frontend: API Calls
 
 **Before:**
+
 ```typescript
 fetch("/api/users/me", {
   headers: {
@@ -194,6 +204,7 @@ fetch("/api/users/me", {
 ```
 
 **After:**
+
 ```typescript
 fetch("/api/users/me", {
   credentials: "include", // ← Cookie sent automatically
@@ -230,6 +241,7 @@ headers.append(
 **Symptom:** Login succeeds but no cookies in DevTools
 
 **Solution:**
+
 - Check `ALLOWED_ORIGINS` includes `http://localhost:5173`
 - Verify backend is running on port 3000
 - Check browser console for CORS errors
@@ -239,6 +251,7 @@ headers.append(
 **Symptom:** API calls return 401 after login
 
 **Solution:**
+
 - Ensure `credentials: "include"` in fetch calls
 - Check cookies exist in DevTools → Application → Cookies
 - Verify backend proxy is working
@@ -248,6 +261,7 @@ headers.append(
 **Symptom:** Browser blocks requests with CORS error
 
 **Solution:**
+
 - Add frontend URL to `ALLOWED_ORIGINS` in `.env`
 - Restart backend server after changing `.env`
 - Check preflight OPTIONS requests succeed
@@ -318,6 +332,7 @@ npm start
 **Production:** Set via hosting platform
 
 **Required in production:**
+
 - `COOKIE_SECRET` - Strong random string
 - `ALLOWED_ORIGINS` - Production frontend URL
 - `NODE_ENV=production`
@@ -340,4 +355,3 @@ npm start
 ---
 
 **Congratulations!** 🎉 You now have a secure, production-ready authentication system with httpOnly cookies that works on both Node.js and Edge platforms!
-

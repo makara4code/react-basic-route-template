@@ -77,6 +77,7 @@ const data = response.data;
 ### **Test Proactive Refresh:**
 
 1. **Start servers:**
+
    ```bash
    npm run dev          # Frontend (Terminal 1)
    npm run dev:server   # Backend (Terminal 2)
@@ -91,6 +92,7 @@ const data = response.data;
 5. **Navigate to dashboard**
 
 6. **Check console:**
+
    ```
    ⏰ Access token close to expiring, refreshing proactively...
    🔄 Refreshing access token...
@@ -108,6 +110,7 @@ const data = response.data;
 3. **Navigate to dashboard**
 
 4. **Check console:**
+
    ```
    🔒 Received 401 error, attempting to refresh token...
    🔄 Refreshing access token...
@@ -147,6 +150,7 @@ const REFRESH_BUFFER = 4 * 60 * 1000 + 50 * 1000; // Refresh after 10 sec
 ```
 
 **Then:**
+
 1. Login
 2. Wait 10 seconds
 3. Make API call → Should see refresh in console
@@ -282,6 +286,7 @@ console.log("Refresh timer cleared");
 ### **1. Don't Use Plain fetch() for API Calls**
 
 **❌ Bad:**
+
 ```typescript
 const response = await fetch("/api/users/me", {
   credentials: "include",
@@ -289,6 +294,7 @@ const response = await fetch("/api/users/me", {
 ```
 
 **✅ Good:**
+
 ```typescript
 import axios from "@/lib/axios";
 
@@ -309,6 +315,7 @@ const response = await fetch("https://jsonplaceholder.typicode.com/posts");
 ### **3. Auth Endpoints Skip Interceptors**
 
 These endpoints are excluded from interceptors:
+
 - `/auth/login`
 - `/auth/logout`
 - `/auth/refresh`
@@ -322,6 +329,7 @@ This prevents infinite loops.
 ### **Issue: "Token not refreshing"**
 
 **Check:**
+
 1. Console logs - is interceptor running?
 2. `REFRESH_THRESHOLD` - is it correct?
 3. `lastRefreshTime` - is it set after login?
@@ -372,4 +380,3 @@ Before deploying to production:
 ---
 
 **Your automatic token refresh is ready! Users will have a seamless authentication experience.** 🎉
-
