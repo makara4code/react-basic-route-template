@@ -1,7 +1,26 @@
-import { Link, Outlet, useLocation } from "react-router";
-import { Home, Info, Users, LayoutDashboard, Settings } from "lucide-react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
+import {
+  Home,
+  Info,
+  Users,
+  LayoutDashboard,
+  Settings,
+  LogIn,
+  LogOut,
+  User as UserIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navItems = [
   { path: "/", label: "Home", icon: Home },
@@ -13,6 +32,8 @@ const navItems = [
 
 export default function DefaultLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const isActive = (path: string) => {
     if (path === "/") {
@@ -20,6 +41,11 @@ export default function DefaultLayout() {
     }
 
     return location.pathname.startsWith(path);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
   return (
@@ -65,7 +91,42 @@ export default function DefaultLayout() {
 
           {/* Optional: Right side actions */}
           <div className="flex items-center gap-2">
-            {/* You can add theme toggle, user menu, etc. here */}
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <UserIcon className="h-4 w-4" />
+                    <span className="hidden sm:inline-block">
+                      {user?.email || "Account"}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/app/dashboard")}>
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/app/settings")}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button asChild variant="default" size="sm">
+                <Link to="/login" className="gap-2">
+                  <LogIn className="h-4 w-4" />
+                  <span className="hidden sm:inline-block">Login</span>
+                </Link>
+              </Button>
+            )}
             <ModeToggle />
           </div>
         </div>

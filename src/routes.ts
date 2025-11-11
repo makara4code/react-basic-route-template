@@ -2,9 +2,11 @@ import { createBrowserRouter, type RouteObject } from "react-router";
 import Home from "./views/Home";
 import About from "./views/About";
 import DefaultLayout from "./layouts/DefaultLayout";
-import Dashboard from "./views/Dashboard";
-import Settings from "./views/Settings";
+import ProtectedDashboard from "./views/ProtectedDashboard";
+import ProtectedSettings from "./views/ProtectedSettings";
 import UserList from "./views/Users";
+import Login from "./views/Login";
+import DashboardLayout from "./layouts/DashboardLayout";
 
 /**
  * Application Routes Configuration
@@ -33,18 +35,23 @@ const routes: RouteObject[] = [
     ],
   },
   {
-    // App routes without layout
+    // App routes without layout (protected)
     path: "/app",
+    Component: DashboardLayout,
     children: [
       {
         path: "dashboard", // Accessible at "/app/dashboard"
-        Component: Dashboard,
+        Component: ProtectedDashboard,
       },
       {
         path: "settings", // Accessible at "/app/settings"
-        Component: Settings,
+        Component: ProtectedSettings,
       },
     ],
+  },
+  {
+    path: "/login",
+    Component: Login,
   },
 ];
 
