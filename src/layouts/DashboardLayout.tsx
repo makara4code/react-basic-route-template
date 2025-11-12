@@ -14,15 +14,15 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Outlet, Navigate, useLocation } from "react-router";
-import { useAuth } from "@/hooks/use-auth";
+import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 
 export default function DashboardLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { data: session, isPending } = authClient.useSession();
   const location = useLocation();
 
   // Show loading spinner while checking authentication
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -31,7 +31,7 @@ export default function DashboardLayout() {
   }
 
   // Redirect to login if not authenticated, preserving the intended destination
-  if (!isAuthenticated) {
+  if (!session) {
     const redirectUrl = `${location.pathname}${location.search}`;
     return (
       <Navigate

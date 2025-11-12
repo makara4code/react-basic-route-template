@@ -8,7 +8,7 @@ import { auditLoggerMiddleware } from "./middleware/audit-logger.js";
 import { loggerMiddleware } from "./middleware/logger.js";
 import { corsMiddleware } from "./middleware/cors.js";
 import { securityMiddleware } from "./middleware/security.js";
-import auth from "./routes/auth.js";
+import { auth } from "./lib/auth.js";
 import proxy from "./routes/proxy.js";
 import { logError } from "./utils/logger.js";
 
@@ -40,8 +40,49 @@ app.get("/health", (c) => {
   });
 });
 
+// Mount Better Auth handler with proper CORS
+app.on(["POST", "GET", "OPTIONS"], "/api/auth/*", async (c) => {
+  const origin = c.req.header("Origin");
+  const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
+
+  // Handle OPTIONS preflight requests
+  if (c.req.method === "OPTIONS") {
+    const corsHeaders: Record<string, string> = {
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, Cookie",
+      "Access-Control-Max-Age": "600",
+    };
+
+    if (origin && allowedOrigins.includes(origin)) {
+      corsHeaders["Access-Control-Allow-Origin"] = origin;
+      corsHeaders["Access-Control-Allow-Credentials"] = "true";
+    }
+
+    return new Response(null, {
+      status: 204,
+      headers: corsHeaders,
+    });
+  }
+
+  // Handle actual requests
+  const response = await auth.handler(c.req.raw);
+
+  // Clone the response and add CORS headers
+  const headers = new Headers(response.headers);
+  if (origin && allowedOrigins.includes(origin)) {
+    headers.set("Access-Control-Allow-Origin", origin);
+    headers.set("Access-Control-Allow-Credentials", "true");
+    headers.set("Access-Control-Expose-Headers", "Set-Cookie");
+  }
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: headers,
+  });
+});
+
 // Mount routes
-app.route("/auth", auth);
 app.route("/api", proxy);
 
 // 404 handler for API routes

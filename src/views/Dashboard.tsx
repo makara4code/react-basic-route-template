@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useAuth } from "@/hooks/use-auth";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,11 +11,11 @@ import {
 import { LogOut, User } from "lucide-react";
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const { data: session } = authClient.useSession();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await authClient.signOut();
     navigate("/");
   };
 
@@ -25,7 +25,7 @@ export default function Dashboard() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">
-            Welcome back, {user?.email || "User"}!
+            Welcome back, {session?.user?.name || session?.user?.email || "User"}!
           </p>
         </div>
         <Button variant="outline" onClick={handleLogout}>
@@ -45,30 +45,22 @@ export default function Dashboard() {
               <User className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-medium">Email:</span>
               <span className="text-sm text-muted-foreground">
-                {user?.email || "N/A"}
+                {session?.user?.email || "N/A"}
               </span>
             </div>
-            {user?.first_name && (
+            {session?.user?.name && (
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">First Name:</span>
+                <span className="text-sm font-medium">Name:</span>
                 <span className="text-sm text-muted-foreground">
-                  {user.first_name}
+                  {session.user.name}
                 </span>
               </div>
             )}
-            {user?.last_name && (
+            {session?.user?.emailVerified !== undefined && (
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">Last Name:</span>
+                <span className="text-sm font-medium">Email Verified:</span>
                 <span className="text-sm text-muted-foreground">
-                  {user.last_name}
-                </span>
-              </div>
-            )}
-            {user?.role && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">Role:</span>
-                <span className="text-sm text-muted-foreground">
-                  {user.role}
+                  {session.user.emailVerified ? "Yes" : "No"}
                 </span>
               </div>
             )}
@@ -114,7 +106,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">User ID:</span>
                 <span className="text-sm text-muted-foreground">
-                  {user?.id || "N/A"}
+                  {session?.user?.id || "N/A"}
                 </span>
               </div>
             </div>

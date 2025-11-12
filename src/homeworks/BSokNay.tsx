@@ -21,7 +21,7 @@ export default function BSokNay() {
       <ul>
         {users.map((data) => {
           return (
-            <li>
+            <li key={data.id}>
               <strong>Name: </strong>
               {data.name}
               <br />

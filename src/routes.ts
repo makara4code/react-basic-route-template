@@ -6,6 +6,8 @@ import ProtectedDashboard from "./views/ProtectedDashboard";
 import ProtectedSettings from "./views/ProtectedSettings";
 import UserList from "./views/Users";
 import Login from "./views/Login";
+import Signup from "./views/Signup";
+import SecurityDemo from "./views/SecurityDemo";
 import DashboardLayout from "./layouts/DashboardLayout";
 
 /**
@@ -32,6 +34,10 @@ const routes: RouteObject[] = [
         path: "users",
         Component: UserList,
       },
+      {
+        path: "security-demo",
+        Component: SecurityDemo,
+      },
     ],
   },
   {
@@ -52,6 +58,10 @@ const routes: RouteObject[] = [
   {
     path: "/login",
     Component: Login,
+  },
+  {
+    path: "/signup",
+    Component: Signup,
   },
 ];
 

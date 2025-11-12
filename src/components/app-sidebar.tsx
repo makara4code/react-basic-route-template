@@ -19,7 +19,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/hooks/use-auth";
+import { authClient } from "@/lib/auth-client";
 
 // Navigation data with actual routes
 const data = {
@@ -31,6 +31,11 @@ const data = {
     },
   ],
   navMain: [
+    {
+      title: "Home",
+      url: "/",
+      icon: Home,
+    },
     {
       title: "Dashboard",
       url: "/app/dashboard",
@@ -62,18 +67,13 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuth();
+  const { data: session } = authClient.useSession();
 
-  // Use user data from auth context (already fetched by /auth/me)
-  // No need to fetch again - this eliminates duplicate requests!
-
+  // Use user data from Better Auth session
   const userData = {
-    name:
-      user?.first_name && user?.last_name
-        ? `${user.first_name} ${user.last_name}`
-        : user?.email?.split("@")[0] || "User",
-    email: user?.email || "user@example.com",
-    avatar: user?.avatar || "",
+    name: session?.user?.name || session?.user?.email?.split("@")[0] || "User",
+    email: session?.user?.email || "user@example.com",
+    avatar: session?.user?.image || "",
   };
 
   return (

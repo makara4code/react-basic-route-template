@@ -56,7 +56,7 @@ function decodeJwtPayload(token: string): any {
 
     // Parse JSON
     return JSON.parse(jsonString);
-  } catch (error) {
+  } catch {
     // Invalid token format or JSON - return null
     return null;
   }
@@ -103,7 +103,7 @@ export function extractUserContext(c: Context): UserContext {
       userId: userId ? String(userId) : null,
       userEmail: userEmail ? String(userEmail) : null,
     };
-  } catch (error) {
+  } catch {
     // If anything goes wrong, return null values
     // Don't throw - this is for logging only, shouldn't break requests
     return { userId: null, userEmail: null };

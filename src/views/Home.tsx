@@ -34,7 +34,7 @@ export default function Home() {
       <ol>
         {posts.map((post) => {
           return (
-            <li>
+            <li key={post.id}>
               <p>ID: {post.id}</p>
               <p>UserID: {post.userId}</p>
               <h3>Title: {post.title}</h3>

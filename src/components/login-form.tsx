@@ -17,7 +17,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/hooks/use-auth";
+import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 
 export function LoginForm({
@@ -29,7 +29,6 @@ export function LoginForm({
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -39,7 +38,7 @@ export function LoginForm({
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await authClient.signIn.email({ email, password });
 
       // Get the redirect URL from query params, or default to dashboard
       const redirectParam = searchParams.get("redirect");

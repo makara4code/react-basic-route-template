@@ -76,4 +76,4 @@ serve({
 });
 
 // Log server startup with Pino
-logServerStart(port, config.nodeEnv, config.directusUrl);
+logServerStart(port, config.nodeEnv);

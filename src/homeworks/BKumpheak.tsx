@@ -22,7 +22,7 @@ export default function BKumpheak() {
       <ol>
         {users.map((user) => {
           return (
-            <li>
+            <li key={user.id}>
               <p>ID:{user.id}</p>
               <p>Name:{user.name}</p>
               <p>Username:{user.username}</p>

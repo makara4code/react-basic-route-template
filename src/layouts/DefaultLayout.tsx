@@ -4,15 +4,15 @@ import {
   Info,
   Users,
   LayoutDashboard,
-  Settings,
+  Shield,
   LogIn,
   LogOut,
-  User as UserIcon,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/use-auth";
+import { authClient } from "@/lib/auth-client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,19 +21,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navItems = [
   { path: "/", label: "Home", icon: Home },
   { path: "/about", label: "About", icon: Info },
   { path: "/users", label: "Users", icon: Users },
   { path: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/app/settings", label: "Settings", icon: Settings },
+  { path: "/security-demo", label: "Security Demo", icon: Shield },
 ];
 
 export default function DefaultLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { data: session } = authClient.useSession();
 
   const isActive = (path: string) => {
     if (path === "/") {
@@ -43,9 +44,21 @@ export default function DefaultLayout() {
     return location.pathname.startsWith(path);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await authClient.signOut();
     navigate("/");
+  };
+
+  // Get user initials for avatar fallback (first letter of first name + first letter of last name)
+  const getInitials = (name: string) => {
+    const parts = name
+      .trim()
+      .split(" ")
+      .filter((n) => n.length > 0);
+    if (parts.length === 0) return "U";
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    // First letter of first name + first letter of last name
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
   return (
@@ -91,14 +104,24 @@ export default function DefaultLayout() {
 
           {/* Optional: Right side actions */}
           <div className="flex items-center gap-2">
-            {isAuthenticated ? (
+            {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <UserIcon className="h-4 w-4" />
-                    <span className="hidden sm:inline-block">
-                      {user?.email || "Account"}
-                    </span>
+                  <Button variant="outline" size="icon">
+                    <Avatar className="h-5 w-5">
+                      <AvatarImage
+                        src={session.user?.image || undefined}
+                        alt={session.user?.name || undefined}
+                      />
+                      <AvatarFallback className="text-xs">
+                        {getInitials(
+                          session.user?.name ||
+                            session.user?.email?.split("@")[0] ||
+                            "User"
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="sr-only">User menu</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">

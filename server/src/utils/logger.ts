@@ -11,7 +11,7 @@
 
 import pino from "pino";
 import { config } from "../config.js";
-import { sanitizeHeaders, sanitizeBody, sanitizeError } from "./sanitizer.js";
+import { sanitizeHeaders, sanitizeError } from "./sanitizer.js";
 
 /**
  * Create Pino logger instance with environment-specific configuration
@@ -31,11 +31,6 @@ export const logger = pino({
   // Use log level from config (supports LOG_LEVEL env variable)
   level: config.logLevel,
 
-  // Base configuration - included in every log entry
-  base: {
-    env: config.nodeEnv,
-  },
-
   // Timestamp configuration - ISO 8601 format for consistency
   timestamp: pino.stdTimeFunctions.isoTime,
 
@@ -49,7 +44,7 @@ export const logger = pino({
           colorize: true,
           translateTime: "HH:MM:ss.l",
           ignore: "pid,hostname",
-          singleLine: false,
+          singleLine: true,
           messageFormat: "{msg}",
           errorLikeObjectKeys: ["err", "error"],
         },
@@ -130,24 +125,10 @@ export const logRequest = (
 /**
  * Log server startup
  */
-export const logServerStart = (
-  port: number,
-  env: string,
-  directusUrl: string
-) => {
-  logger.info("");
-  logger.info("🚀 Server starting...");
-  logger.info(`📁 Environment: ${env}`);
-  logger.info(`🌐 Port: ${port}`);
-  logger.info(`🔗 Directus URL: ${directusUrl}`);
-  logger.info(
-    `🍪 Cookie settings: httpOnly, ${
-      config.isProduction ? "secure" : "not secure"
-    }, SameSite=Lax`
-  );
-  logger.info("");
-  logger.info(`✅ Server running at http://localhost:${port}`);
-  logger.info("");
+export const logServerStart = (port: number, env: string) => {
+  logger.info("Server starting...");
+  logger.info(`Environment: ${env}`);
+  logger.info(`Server running at http://localhost:${port}`);
 };
 
 /**

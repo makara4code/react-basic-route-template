@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "@/lib/axios";
-import { useAuth } from "@/hooks/use-auth";
+import { authClient } from "@/lib/auth-client";
 
 type TestStatus = "idle" | "running" | "pass" | "fail" | "warning";
 
@@ -28,7 +28,9 @@ type TestLog = {
 };
 
 export default function SecurityDebugPanel() {
-  const { user, isAuthenticated } = useAuth();
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+  const isAuthenticated = !!session;
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [logs, setLogs] = useState<TestLog[]>([]);

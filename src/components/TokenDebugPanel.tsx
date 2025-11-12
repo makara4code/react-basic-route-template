@@ -14,7 +14,7 @@ import axios, {
   clearRefreshTimer,
   manualRefresh,
 } from "@/lib/axios";
-import { useAuth } from "@/hooks/use-auth";
+import { authClient } from "@/lib/auth-client";
 
 type RefreshLog = {
   timestamp: number;
@@ -23,7 +23,8 @@ type RefreshLog = {
 };
 
 export default function TokenDebugPanel() {
-  const { user } = useAuth();
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [timeUntilRefresh, setTimeUntilRefresh] = useState(0);

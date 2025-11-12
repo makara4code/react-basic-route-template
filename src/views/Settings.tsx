@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useAuth } from "@/hooks/use-auth";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,11 +11,11 @@ import {
 import { LogOut } from "lucide-react";
 
 export default function Settings() {
-  const { user, logout } = useAuth();
+  const { data: session } = authClient.useSession();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await authClient.signOut();
     navigate("/");
   };
 
@@ -44,22 +44,22 @@ export default function Settings() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Email</label>
               <p className="text-sm text-muted-foreground">
-                {user?.email || "N/A"}
+                {session?.user?.email || "N/A"}
               </p>
             </div>
-            {user?.first_name && (
+            {session?.user?.name && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">First Name</label>
+                <label className="text-sm font-medium">Name</label>
                 <p className="text-sm text-muted-foreground">
-                  {user.first_name}
+                  {session.user.name}
                 </p>
               </div>
             )}
-            {user?.last_name && (
+            {session?.user?.emailVerified !== undefined && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">Last Name</label>
+                <label className="text-sm font-medium">Email Verified</label>
                 <p className="text-sm text-muted-foreground">
-                  {user.last_name}
+                  {session.user.emailVerified ? "Yes" : "No"}
                 </p>
               </div>
             )}

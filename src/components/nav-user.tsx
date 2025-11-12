@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/hooks/use-auth";
+import { authClient } from "@/lib/auth-client";
 
 export function NavUser({
   user,
@@ -29,22 +29,23 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-  const { logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await authClient.signOut();
     navigate("/login");
   };
 
-  // Get user initials for avatar fallback
+  // Get user initials for avatar fallback (first letter of first name + first letter of last name)
   const getInitials = (name: string) => {
-    return name
+    const parts = name
+      .trim()
       .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+      .filter((n) => n.length > 0);
+    if (parts.length === 0) return "U";
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    // First letter of first name + first letter of last name
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
   return (
