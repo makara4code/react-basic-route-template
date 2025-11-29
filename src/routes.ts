@@ -5,6 +5,7 @@ import DefaultLayout from "./layouts/DefaultLayout";
 import Dashboard from "./views/Dashboard";
 import Settings from "./views/Settings";
 import UserList from "./views/Users";
+import Login from "./views/auth/Login";
 
 /**
  * Application Routes Configuration
@@ -45,6 +46,10 @@ const routes: RouteObject[] = [
         Component: Settings,
       },
     ],
+  },
+  {
+    path: "/login",
+    Component: Login,
   },
 ];
 

@@ -2,6 +2,7 @@ import { Link, Outlet, useLocation } from "react-router";
 import { Home, Info, Users, LayoutDashboard, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { path: "/", label: "Home", icon: Home },
@@ -66,6 +67,9 @@ export default function DefaultLayout() {
           {/* Optional: Right side actions */}
           <div className="flex items-center gap-2">
             {/* You can add theme toggle, user menu, etc. here */}
+            <Link to="/login">
+              <Button>Login</Button>
+            </Link>
             <ModeToggle />
           </div>
         </div>
