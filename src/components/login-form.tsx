@@ -16,7 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { api } from "@/lib/api";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
+import { useAuth } from "@/context/AuthContext";
 
 export function LoginForm({
   className,
@@ -25,6 +26,10 @@ export function LoginForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const { checkAuth } = useAuth();
+
+  const from = location.state?.from?.pathname || "/app/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +43,8 @@ export function LoginForm({
       const res = await api.post("/api/auth/sign-in/email", body);
 
       if (res.data && res.data.user) {
-        navigate("/app/dashboard");
+        await checkAuth();
+        navigate(from, { replace: true });
       } else {
         throw new Error("Invalid response from server");
       }

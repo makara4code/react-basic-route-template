@@ -6,6 +6,7 @@ import Dashboard from "./views/Dashboard";
 import Settings from "./views/Settings";
 import UserList from "./views/Users";
 import Login from "./views/auth/Login";
+import { AuthGuard } from "./components/AuthGuard";
 
 /**
  * Application Routes Configuration
@@ -34,8 +35,9 @@ const routes: RouteObject[] = [
     ],
   },
   {
-    // App routes without layout
+    // Protected app routes (requires authentication)
     path: "/app",
+    Component: AuthGuard,
     children: [
       {
         path: "dashboard", // Accessible at "/app/dashboard"
