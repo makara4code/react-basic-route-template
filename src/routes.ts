@@ -6,6 +6,7 @@ import Dashboard from "./views/Dashboard";
 import Settings from "./views/Settings";
 import UserList from "./views/Users";
 import Login from "./views/auth/Login";
+import { AuthLayout } from "./layouts/AuthLayout";
 
 /**
  * Application Routes Configuration
@@ -36,6 +37,7 @@ const routes: RouteObject[] = [
   {
     // App routes without layout
     path: "/app",
+    Component: AuthLayout,
     children: [
       {
         path: "dashboard", // Accessible at "/app/dashboard"
